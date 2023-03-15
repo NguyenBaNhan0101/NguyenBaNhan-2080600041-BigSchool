@@ -1,4 +1,5 @@
-﻿using NguyenBaNhan_2080600041.Models;
+﻿using Microsoft.AspNet.Identity;
+using NguyenBaNhan_2080600041.Models;
 using NguyenBaNhan_2080600041.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,30 @@ namespace NguyenBaNhan_2080600041.Controllers
         {
             var viewModel = new CourseViewModel
             {
-                Categories = _dbContext.Categories.ToList()
+                Categories = _dbContext.Categories.ToList(),
             };
             return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(CourseViewModel viewModel)
+        {
+            if(!ModelState.IsValid)
+            {
+                viewModel.Categories = _dbContext.Categories.ToList();
+                return View("Create",viewModel);
+            }
+            var course = new Course
+            {
+                LecturerId = User.Identity.GetUserId(),
+                DateTime = viewModel.GetDateTime(),
+                CategoryId = viewModel.Category,
+                Place = viewModel.Place
+            };
+            _dbContext.Courses.Add(course);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
