@@ -12,7 +12,7 @@ namespace NguyenBaNhan_2080600041.ViewModels
         public override bool IsValid(object value)
         {
             DateTime dateTime;
-            var isValid = DateTime.TryParseExact(Convert.ToString(value),"dd/mm/yyyy",
+            var isValid = DateTime.TryParseExact(Convert.ToString(value),"dd/M/yyyy",
                 CultureInfo.CurrentCulture,
                 DateTimeStyles.None,
                 out dateTime);

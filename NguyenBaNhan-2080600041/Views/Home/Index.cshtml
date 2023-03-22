@@ -1,10 +1,11 @@
-﻿@model IEnumerable<NguyenBaNhan_2080600041.Models.Course>
+﻿@*@model IEnumerable<NguyenBaNhan_2080600041.Models.Course>*@
+@model NguyenBaNhan_2080600041.ViewModels.CoursesViewModel
 @{
     ViewBag.Title = "Home Page";
     <link href="~/CSS/Site.css" rel="stylesheet" />
 }
 
-<div>
+@*<div>
     <ul>
         @foreach (var course in Model)
          {
@@ -13,9 +14,9 @@
             </li>
          }
     </ul>
-</div>
+</div>*@
 <ul class="course">
-    @foreach (var course in Model)
+    @foreach (var course in Model.UpCommingCourses)
     {
         <li>
             <div class="date">
@@ -29,14 +30,53 @@
             <div class="details">
                 <span class="lecturer">
                     @course.Lecturer.Name
+                    @if (Model.ShowAction)
+                    {
+                        <button class="btn btn-default btn-sm js-toggle-follow" data-user-id="@course.LecturerId">Follow</button>
+                    }
                 </span>
                 <span class="category">
                     @course.Category.Name
+                    @if (Model.ShowAction)
+                    {
+                        <button data-course-id="@course.Id" class="btn btn-default btn-sm js-toggle-attendance">Going?</button>
+                    }
                 </span>
+                
             </div>
         </li>
     }
 </ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-attendance").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/attendances", { courseId: button.attr("data-course-id") })
+                    .done(function () {
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going")
+                    })
+                    .fail(function () {
+                        alert("Something Failed!");
+                    });
+            });
+            $(".js-toggle-follow").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/Followings", { followeeId: button.attr("data-user-id") })
+                    .done(function () {
+                        button.text("Following");
+                    })
+                    .fail(function () {
+                        alert("Something failed");
+                    });
+            });
+        });
+    </script>
+}
 @*<div class="jumbotron">
     <h1>ASP.NET</h1>
     <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>

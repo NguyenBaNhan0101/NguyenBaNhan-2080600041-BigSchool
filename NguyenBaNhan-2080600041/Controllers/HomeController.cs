@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using System.Web.Mvc;
+using NguyenBaNhan_2080600041.ViewModels;
 
 namespace NguyenBaNhan_2080600041.Controllers
 {
@@ -21,7 +22,13 @@ namespace NguyenBaNhan_2080600041.Controllers
             .Include(c => c.Lecturer)
             .Include(c => c.Category)
             .Where(c => c.DateTime > DateTime.Now);
-            return View(upcommingCourses);
+            //return View(upcommingCourses);
+            var viewModel = new CoursesViewModel
+            {
+                UpCommingCourses = upcommingCourses,
+                ShowAction = User.Identity.IsAuthenticated
+            };
+            return View(viewModel);
         }
 
         public ActionResult About()
